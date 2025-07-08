@@ -1,23 +1,27 @@
 import pandas as pd
 
 def has_zeros(dic:dict)->bool:
-    flag = sum([i==0 for i in dic.values()])
-    if flag:
-        for k in dic.keys():
-            dic[k]+=1
-        return True
-    return False
+    return any([i==0 for i in dic.values()])
+    
+def add_one(dic: dict) -> None:
+    for k in dic:
+        dic[k] += 1
 
 def divider(dic:dict,num:int)-> None:
     if num == 0:
         return
-    num += int(has_zeros(dic))
+    if has_zeros(dic):
+        add_one(dic)
+        num += len(dic)
     for k in dic.keys():
         dic[k] /=num
 
 
-def aa(data:str,target:str)->dict:
-    df = pd.read_csv(data,delim_whitespace=True)
+def aa(data:str,target:str=None)->dict:
+    df = pd.read_csv(data,sep=r'\s+')
+    # print(df.columns)
+    if not target or target not in df.columns:
+        target = df.columns[-1]
     dic = {}
     uniq_tar = df[target].unique()
     columns = [col for col in df.columns if col not in [target,'id']]
@@ -46,4 +50,13 @@ def print_tabel(tabel:dict , distance  = 0)-> None:
             print_tabel(tabel[k] , distance + 1)
         else:
             print(f"{'    '*(distance+1)}{tabel[k]}")
-print_tabel(aa('./data.csv','Buy_Computer'))
+# print_tabel(aa('./data.csv','Buy_Computer'))
+
+tabel = aa('./data.csv','Buy_Computer')
+promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excellent'}
+def predict_class(tabel:dict,promt:dict)-> bool:
+    yes =  tabel['yes']['age'][promt['age']] * tabel['yes']['income'][promt['income']]*tabel['yes']['student'][promt['student']]*tabel['yes']['credit_rating'][promt['credit_rating']]
+    no = tabel['no']['age'][promt['age']]*tabel['no']['income'][promt['income']]*tabel['no']['student'][promt['student']]*tabel['no']['credit_rating'][promt['credit_rating']]
+    return('no' if no > yes else 'yes')
+print(predict_class(tabel,promt))
+
