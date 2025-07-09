@@ -1,5 +1,9 @@
 import pandas as pd
-from fanctions.naive_bayes_utils import NaiveBayesUtils
+from fanctions.nb_Trainer import NaiveBayesUtils
+from fanctions.create_data_frame_from_CSV import CreateDataFrame
+from fanctions.menu import Meun
+from fanctions.cleane_data_frame import CleaneDF
+from fanctions.nb_lassifier import NBClassifier
 
 # def has_zeros(dic:dict)->bool:
 #     return any([i==0 for i in dic.values()])
@@ -52,24 +56,25 @@ def print_tabel(tabel:dict , distance  = 0)-> None:
         else:
             print(f"{'    '*(distance+1)}{tabel[k]}")
 # print_tabel(aa('./data.csv','Buy_Computer'))
-
-tabel = NaiveBayesUtils.build_probability_table('./data.csv','Buy_Computer')
+df = CreateDataFrame.creat_df_from_adrrres('./data.csv')
+cleane_df = CleaneDF.cleane_df(df)
+tabel = NaiveBayesUtils.build_probability_table(cleane_df,'Buy_Computer')
 promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excellent'}
-def predict_class1(tabel:dict,promt:dict)-> bool:
-    yes =  tabel['yes']['age'][promt['age']] * tabel['yes']['income'][promt['income']]*tabel['yes']['student'][promt['student']]*tabel['yes']['credit_rating'][promt['credit_rating']]
-    no = tabel['no']['age'][promt['age']]*tabel['no']['income'][promt['income']]*tabel['no']['student'][promt['student']]*tabel['no']['credit_rating'][promt['credit_rating']]
-    print({'no':no,'yes':yes})
-    return('no' if no > yes else 'yes')
+# def predict_class1(tabel:dict,promt:dict)-> bool:
+#     yes =  tabel['yes']['age'][promt['age']] * tabel['yes']['income'][promt['income']]*tabel['yes']['student'][promt['student']]*tabel['yes']['credit_rating'][promt['credit_rating']]
+#     no = tabel['no']['age'][promt['age']]*tabel['no']['income'][promt['income']]*tabel['no']['student'][promt['student']]*tabel['no']['credit_rating'][promt['credit_rating']]
+#     print({'no':no,'yes':yes})
+#     return('no' if no > yes else 'yes')
 
-def predict_class(tabel:dict,promt:dict)-> bool:
-    dic ={}
-    for k in tabel.keys():
-        num = 1
-        for key,val in promt.items():
-            num *= tabel[k][key][val]
-        dic[k] = num
-    print(dic)
-    return max(dic , key=dic.get)
-
-print(predict_class(tabel,promt))
-print(predict_class1(tabel,promt))
+# def predict_class(tabel:dict,promt:dict)-> bool:
+#     dic ={}
+#     for k in tabel.keys():
+#         num = 1
+#         for key,val in promt.items():
+#             num *= tabel[k][key][val]
+#         dic[k] = num
+#     print(dic)
+#     return max(dic , key=dic.get)
+res = NBClassifier.Classifier(tabel,promt)
+print(res)
+Meun.meun()

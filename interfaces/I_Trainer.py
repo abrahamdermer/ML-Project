@@ -1,8 +1,8 @@
 from abc import ABC , abstractmethod
 
-class INaiveBayesUtils(ABC):
+class ITrainer(ABC):
     
     @staticmethod
     @abstractmethod
-    def build_naive_bayes(data,target) -> dict:
+    def trainer(data,target) -> dict:
         pass

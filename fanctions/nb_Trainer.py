@@ -1,8 +1,8 @@
 import pandas as pd
-from interfaces.I_naive_bayes_utils import INaiveBayesUtils
+from interfaces.I_Trainer import ITrainer
 
 
-class NaiveBayesUtils(INaiveBayesUtils):
+class NaiveBayesUtils(ITrainer):
 
     @staticmethod   
     def _has_zeros(dic:dict)->bool:
@@ -24,9 +24,7 @@ class NaiveBayesUtils(INaiveBayesUtils):
             dic[k] /=num
 
     @staticmethod
-    def build_probability_table(data:str,target:str=None)->dict:
-        df = pd.read_csv(data,sep=r'\s+')
-        # print(df.columns)
+    def trainer(df:pd.DataFrame,target:str=None)->dict:
         if not target or target not in df.columns:
             target = df.columns[-1]
         dic = {}
@@ -45,5 +43,4 @@ class NaiveBayesUtils(INaiveBayesUtils):
                 ter_dict[col] = col_dict
             dic[tar] = ter_dict
         return dic
-    
     
