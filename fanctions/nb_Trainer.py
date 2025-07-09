@@ -6,7 +6,7 @@ class NBTrainer(ITrainer):
 
     @staticmethod   
     def _has_zeros(dic:dict)->bool:
-        return any([i==0 for i in dic.values()])
+        return any(i==0 for i in dic.values())
     
     @staticmethod    
     def _add_one(dic: dict) -> None:
@@ -25,7 +25,7 @@ class NBTrainer(ITrainer):
 
     @staticmethod
     def _tar_present(dic:dict) -> None:
-        flag = int(any([val['tar_presnt']==0 for val in dic.values()]))
+        flag = int(any(val['tar_presnt'] == 0 for val in dic.values()))
         count = sum(dic[key]['tar_presnt'] for key in dic.keys())
         if flag:
             count += len(dic)
@@ -51,8 +51,7 @@ class NBTrainer(ITrainer):
                 NBTrainer._divider(col_dict,tar_count)
                 tar_dict[col] = col_dict
             tar_dict['tar_presnt'] = tar_count
-            NBTrainer._tar_present(dic)
             dic[tar] = tar_dict
-        
+        NBTrainer._tar_present(dic) 
         return dic
     

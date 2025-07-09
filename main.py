@@ -58,7 +58,9 @@ def print_tabel(tabel:dict , distance  = 0)-> None:
 # print_tabel(aa('./data.csv','Buy_Computer'))
 df = CreateDataFrame.creat_df_from_adrrres('./data.csv')
 cleane_df = CleaneDF.cleane_df(df)
-tabel = NBTrainer.trainer(cleane_df,'Buy_Computer')
+target = 'Buy_Computer'
+tabel = NBTrainer.trainer(cleane_df,target)
+print_tabel(tabel)
 promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excellent'}
 # def predict_class1(tabel:dict,promt:dict)-> bool:
 #     yes =  tabel['yes']['age'][promt['age']] * tabel['yes']['income'][promt['income']]*tabel['yes']['student'][promt['student']]*tabel['yes']['credit_rating'][promt['credit_rating']]
@@ -78,3 +80,15 @@ promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excel
 res = NBClassifier.Classifier(tabel,promt)
 print(res)
 # Meun.meun()
+exclude_cols = ['id',target]
+
+def row_to_dict(row):
+    dic = {k: v for k, v in row.items() if k not in exclude_cols}
+    print(dic)
+    return dic
+
+df['dddddd'] = df.apply(lambda x:NBClassifier.Classifier(tabel,row_to_dict(x)),axis=1)
+# print(df)
+mask = df['dddddd'] == df[target]
+percent_diff = 100 * mask.sum() / len(df)
+print(f"{percent_diff} %")
