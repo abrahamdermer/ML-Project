@@ -1,5 +1,5 @@
 import pandas as pd
-from fanctions.nb_Trainer import NaiveBayesUtils
+from fanctions.nb_Trainer import NBTrainer
 from fanctions.create_data_frame_from_CSV import CreateDataFrame
 from fanctions.menu import Meun
 from fanctions.cleane_data_frame import CleaneDF
@@ -58,7 +58,7 @@ def print_tabel(tabel:dict , distance  = 0)-> None:
 # print_tabel(aa('./data.csv','Buy_Computer'))
 df = CreateDataFrame.creat_df_from_adrrres('./data.csv')
 cleane_df = CleaneDF.cleane_df(df)
-tabel = NaiveBayesUtils.build_probability_table(cleane_df,'Buy_Computer')
+tabel = NBTrainer.trainer(cleane_df,'Buy_Computer')
 promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excellent'}
 # def predict_class1(tabel:dict,promt:dict)-> bool:
 #     yes =  tabel['yes']['age'][promt['age']] * tabel['yes']['income'][promt['income']]*tabel['yes']['student'][promt['student']]*tabel['yes']['credit_rating'][promt['credit_rating']]
@@ -77,4 +77,4 @@ promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excel
 #     return max(dic , key=dic.get)
 res = NBClassifier.Classifier(tabel,promt)
 print(res)
-Meun.meun()
+# Meun.meun()

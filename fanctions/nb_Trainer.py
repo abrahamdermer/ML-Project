@@ -2,7 +2,7 @@ import pandas as pd
 from interfaces.I_Trainer import ITrainer
 
 
-class NaiveBayesUtils(ITrainer):
+class NBTrainer(ITrainer):
 
     @staticmethod   
     def _has_zeros(dic:dict)->bool:
@@ -17,11 +17,20 @@ class NaiveBayesUtils(ITrainer):
     def _divider(dic:dict,num:int)-> None:
         if num == 0:
             return
-        if NaiveBayesUtils._has_zeros(dic):
-            NaiveBayesUtils._add_one(dic)
+        if NBTrainer._has_zeros(dic):
+            NBTrainer._add_one(dic)
             num += len(dic)
         for k in dic.keys():
             dic[k] /=num
+
+    @staticmethod
+    def _tar_present(dic:dict) -> None:
+        flag = int(any([val['tar_presnt']==0 for val in dic.values()]))
+        count = sum(dic[key]['tar_presnt'] for key in dic.keys())
+        if flag:
+            count += len(dic)
+        for val in dic.values():
+            val['tar_presnt'] = (val['tar_presnt'] + flag) /count
 
     @staticmethod
     def trainer(df:pd.DataFrame,target:str=None)->dict:
@@ -31,7 +40,7 @@ class NaiveBayesUtils(ITrainer):
         uniq_tar = df[target].unique()
         columns = [col for col in df.columns if col not in [target,'id']]
         for tar in uniq_tar:
-            ter_dict ={}
+            tar_dict ={}
             tar_count = len(df[df[target] == tar])
             for col in columns:
                 uniq_val = df[col].unique()
@@ -39,8 +48,11 @@ class NaiveBayesUtils(ITrainer):
                 for val in uniq_val:
                     num = len(df[(df[target] == tar) & (df[col] == val)])
                     col_dict[val] = num
-                NaiveBayesUtils._divider(col_dict,tar_count)
-                ter_dict[col] = col_dict
-            dic[tar] = ter_dict
+                NBTrainer._divider(col_dict,tar_count)
+                tar_dict[col] = col_dict
+            tar_dict['tar_presnt'] = tar_count
+            NBTrainer._tar_present(dic)
+            dic[tar] = tar_dict
+        
         return dic
     
