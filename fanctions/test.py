@@ -1,12 +1,16 @@
-import nb_lassifier
+from fanctions.nb_Classifier import NBClassifier
 import pandas as pd
-target = ''
-exclude_cols = ['id',target]
 
-def row_to_dict(row):
-    return {k: v for k, v in row.items() if k not in exclude_cols}
+class Test:
 
+    def _row_to_dict(row,target:dict)->dict:
+        exclude_cols = ['id',target]
+        return {k: v for k, v in row.items() if k not in exclude_cols}
 
-df = pd.read_csv('./data.csv')
-df['dddddd'] = df.apply(lambda x:nb_lassifier(row_to_dict(x)))
-print(df)
+    @staticmethod
+    def get_test(train,test_df:pd.DataFrame,target=None)->float:
+        if target is None:
+            target = test_df.columns[-1]
+        test_df['dddddd'] = test_df.apply(lambda x:NBClassifier.classifier(train,Test._row_to_dict(x)))
+        mask = test_df['dddddd'] == test_df[target]
+        return 100 * mask.sum() / len(test_df)

@@ -3,7 +3,7 @@ from interfaces.I_classifier import IClassifier
 class NBClassifier(IClassifier):
 
     @staticmethod
-    def Classifier(tabel:dict,promt:dict)-> str:
+    def classifier(tabel:dict,promt:dict)-> str:
         dic ={}
         colunms_num = 0
         for k in tabel.keys():
@@ -13,5 +13,5 @@ class NBClassifier(IClassifier):
                 num *= tabel[k][key][val]
             dic[k] = num*tabel[k]['tar_presnt']
         
-        print(dic)
+        # print(dic)
         return max(dic , key=dic.get)
