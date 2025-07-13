@@ -1,1 +1,10 @@
+# Python virtual env
 /.venv
+/venv
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# VS Code settings (אופציונלי)
+.vscode/
