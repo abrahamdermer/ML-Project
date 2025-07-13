@@ -1,5 +1,6 @@
 import pandas as pd
-from maneger import Maneger
+import uvicorn
+from my_manager import Manager
 from fanctions.nb_Trainer import NBTrainer
 from fanctions.create_data_frame_from_CSV import CreateDataFrame
 from fanctions.menu import Meun
@@ -102,7 +103,8 @@ promt = {'age': 'youth', 'income':'high', 'student':'no', 'credit_rating':'excel
 # percent_diff = 100 * mask.sum() / len(df)
 # print(f"{percent_diff} %")
 
-
-meneger = Maneger(adress,target)
-meneger.run()
-print(f"for your promt the anser is: {meneger.get_classifi(promt)}, by {meneger.get_tast()}%")
+if __name__ == '__main__':
+    uvicorn.run("API:app", host="0.0.0.0", port=8000, reload=True)
+# maneger.run_server()
+# aaa = maneger.get_classifi(promt)
+# print(f"for your promt the anser is: {aaa}, by {maneger.get_tast()}%")
