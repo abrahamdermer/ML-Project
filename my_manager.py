@@ -35,3 +35,7 @@ class Manager:
         if self._test:
             return self._test
         return None
+    
+    def get_traine(self):
+        if self._traine:
+            return self._traine
