@@ -36,6 +36,9 @@ class Manager:
             return self._test
         return None
     
-    def get_traine(self):
+    def get_traine(self)->dict|None:
         if self._traine:
             return self._traine
+        return None
+    
+    

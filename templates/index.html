@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיווג חכם - בחר מאפיינים</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .feature {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: right;
+        }
+        label {
+            font-weight: bold;
+            margin-left: 10px;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 8px;
+        }
+        select {
+            padding: 12px;
+            width: 100%;
+            max-width: 400px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background-color: white;
+            transition: border 0.3s;
+        }
+        select:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        button {
+            padding: 12px 30px;
+            margin-top: 20px;
+            font-size: 18px;
+            border-radius: 6px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .response {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            text-align: right;
+            display: none;
+        }
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #4CAF50;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .feature-description {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>סיווג חכם - בחר מאפיינים</h1>
+        <p>אנא מלא את הפרטים הבאים כדי לקבל את הסיווג המדויק ביותר</p>
+        
+        <form id="choiceForm">
+            {% for feature, data in features.items() %}
+            <div class="feature">
+                <label for="{{ feature }}">{{ data.label }}</label>
+                {% if data.description %}
+                <div class="feature-description">{{ data.description }}</div>
+                {% endif %}
+                <select name="{{ feature }}" id="{{ feature }}" required>
+                    <option value="" disabled selected>בחר אפשרות</option>
+                    {% for option in data.options %}
+                    <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endfor %}
+            
+            <button type="submit" id="submitBtn">קבל סיווג</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>מעבד את הנתונים, אנא המתן...</p>
+        </div>
+        
+        <div class="response" id="response">
+            <h3>תוצאות הסיווג:</h3>
+            <div id="responseContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("choiceForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            
+            // Show loading spinner
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("response").style.display = "none";
+            document.getElementById("submitBtn").disabled = true;
+            
+            const form = document.getElementById("choiceForm");
+            const formData = new FormData(form);
+            const prompt = {};
+            
+            for (const [key, value] of formData) {
+                prompt[key] = value;
+            }
+
+            try {
+                const response = await fetch("/classifi/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(prompt),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`שגיאה בשרת: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // Format the response nicely
+                let responseHtml = '<div class="result-item">';
+                if (result.category) {
+                    responseHtml += `<p><strong>קטגוריה:</strong> ${result.category}</p>`;
+                }
+                if (result.confidence) {
+                    responseHtml += `<p><strong>רמת ביטחון:</strong> ${Math.round(result.confidence * 100)}%</p>`;
+                }
+                if (result.recommendations) {
+                    responseHtml += '<p><strong>המלצות:</strong></p><ul>';
+                    result.recommendations.forEach(rec => {
+                        responseHtml += `<li>${rec}</li>`;
+                    });
+                    responseHtml += '</ul>';
+                }
+                responseHtml += '</div>';
+                
+                document.getElementById("responseContent").innerHTML = responseHtml;
+                document.getElementById("response").style.display = "block";
+                
+            } catch (error) {
+                document.getElementById("responseContent").innerHTML = 
+                    `<p class="error">אירעה שגיאה: ${error.message}</p>
+                     <p>נסה שוב מאוחר יותר או פנה לתמיכה טכנית.</p>`;
+                document.getElementById("response").style.display = "block";
+                console.error('Error:', error);
+            } finally {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("submitBtn").disabled = false;
+            }
+        });
+
+        // Add some interactivity to form elements
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', function() {
+                this.style.borderColor = '#4CAF50';
+                setTimeout(() => {
+                    this.style.borderColor = '#ddd';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
