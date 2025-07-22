@@ -11,5 +11,5 @@ class NBClassifier(IClassifier):
             for key,val in promt.items():
                 num *= tabel[k][key][val]
             dic[k] = num*tabel[k]['tar_presnt']
-        # print(dic)
+        print(dic)
         return max(dic , key=dic.get)

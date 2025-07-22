@@ -8,3 +8,10 @@ __pycache__/
 
 # VS Code settings (אופציונלי)
 .vscode/
+
+.train/.venv
+.predict/.venv
+
+**/.venv/
+**/venv/
+**/.vscode/

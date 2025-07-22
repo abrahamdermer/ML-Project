@@ -1,7 +1,7 @@
 from fanctions.nb_Trainer import NBTrainer
 from fanctions.create_data_frame_from_CSV import CreateDataFrame
 from fanctions.cleane_data_frame import CleaneDF
-from fanctions.nb_Classifier import NBClassifier
+# from fanctions.nb_Classifier import NBClassifier
 from fanctions.test import Test
 
 # המנהל של כל הסיווג והתוצאות
@@ -32,8 +32,8 @@ class Manager:
         self._test = Test.get_test(self._traine,test_df,self._target)
         
     # מחזיר את ה"ניבויי" 
-    def get_classifi(self,promt:dict) -> str:
-        return NBClassifier.classifier(self._traine,promt)
+    # def get_classifi(self,promt:dict) -> str:
+    #     return NBClassifier.classifier(self._traine,promt)
         
     def get_test(self)->float|None:
         if self._test:
