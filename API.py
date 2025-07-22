@@ -10,15 +10,18 @@ app = FastAPI()
 
 target = 'class'
 adress = "./newqq.csv"
+# יצירת מופע של מנהל
 manager = Manager(adress,target)
+
+# הראצה של המנהל ויצירת האימון
 manager.run_and_test()
 # manager.run()
 
 
-
+# שליחת טופס ספציפי של פיטריות
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    trained_data = manager.get_traine()  # שליפת המילון מה-Manager
+    trained_data = manager.get_traine()  # שליפת המילון מהמנהל
     features = {}
     
     for category in trained_data["e"]:  # עבור כל קטגוריה ב-"e"
@@ -35,17 +38,19 @@ async def read_root(request: Request):
         {"request": request, "features": features}
     )
 
-
+# קבלת ה"פרומט" מהמשתנה
 @app.post("/classifi/")
 def send(promt:dict):
     print(promt)
     promt = dict(promt)
     return manager.get_classifi(promt)
 
+# החזרת אחוזי הדיוק
 @app.get("/test")
 def test():
     return manager.get_test()
 
+# זה מחזיר את המסווג שיוכלו  לראות את הסוגים
 @app.get("/options")
 def op():
     return manager.get_traine()
