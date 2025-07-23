@@ -1,7 +1,10 @@
 from interfaces.I_classifier import IClassifier
 
+
+# NBClassifier inherits from IClassifier
 class NBClassifier(IClassifier):
 
+# Return the answer with the highest probability by parameters
     @staticmethod
     def classifier(tabel:dict,promt:dict)-> str:
         dic ={}
