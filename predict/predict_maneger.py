@@ -4,7 +4,7 @@ import json
 
 
 class Manager():
-    def __init__(self,address:str = 'http://127.0.0.1:8000/'):
+    def __init__(self,address:str = 'http://host.docker.internal:8000/'):
         req = requests.get(address)
         self._triner = req.json()
         # print(type(self._triner))
